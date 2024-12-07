@@ -2,13 +2,12 @@
 
 namespace App\Traits;
 
-
-trait ApiConcerns {
+trait ApiConcerns
+{
     public function include(string $relationship): bool
     {
         $param = request()->get('include');
 
-        dd($param);
         if (! isset($param)) {
             return false;
         }

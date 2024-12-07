@@ -6,21 +6,19 @@ use App\Models\Article;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title("Articles")]
+#[Title('Articles')]
 class ArticleIndex extends Component
 {
+    //    public $articles = [];
 
-//    public $articles = [];
-
-//    public function mount() {
-//        $this->articles = Article::all();
-//    }
-
+    //    public function mount() {
+    //        $this->articles = Article::all();
+    //    }
 
     public function render()
     {
         return view('livewire.article-index', [
-            'articles' => Article::all()
+            'articles' => Article::all(),
         ]);
     }
 }

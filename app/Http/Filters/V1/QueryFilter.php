@@ -4,10 +4,11 @@ namespace App\Http\Filters\V1;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use phpDocumentor\Reflection\Types\Void_;
 
-abstract class QueryFilter {
+abstract class QueryFilter
+{
     protected Builder $builder;
+
     protected Request $request;
 
     public function __construct(Request $request)
@@ -16,10 +17,10 @@ abstract class QueryFilter {
     }
 
     // Called by apply method when filters needed.
-    protected function filter(Array $filtersNeeded): Builder
+    protected function filter(array $filtersNeeded): Builder
     {
-        foreach($filtersNeeded as $key => $value){
-            if(method_exists($this, $key)){
+        foreach ($filtersNeeded as $key => $value) {
+            if (method_exists($this, $key)) {
                 $this->$key($value);
             }
         }
@@ -31,8 +32,8 @@ abstract class QueryFilter {
     {
         $this->builder = $builder;
 
-        foreach($this->request->all() as $key => $value){
-            if(method_exists($this, $key)){
+        foreach ($this->request->all() as $key => $value) {
+            if (method_exists($this, $key)) {
                 $this->$key($value);
             }
         }

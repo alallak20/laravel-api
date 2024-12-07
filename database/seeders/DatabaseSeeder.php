@@ -15,28 +15,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-//         $users = User::factory(10)->create();
-//
-//         \App\Models\Ticket::factory(100)
-//             ->recycle($users)
-//             ->create();
+        //         $users = User::factory(10)->create();
+        //
+        //         \App\Models\Ticket::factory(100)
+        //             ->recycle($users)
+        //             ->create();
 
-//        User::factory()->create([
-//            'name' => 'Murtada',
-//            'email' => 'murtada@example.com',
-//            'password' => bcrypt('password'), // Ensure password is hashed
-//        ]);
+        //        User::factory()->create([
+        //            'name' => 'Murtada',
+        //            'email' => 'murtada@example.com',
+        //            'password' => bcrypt('password'), // Ensure password is hashed
+        //        ]);
 
-//        User::factory()->create([
-//            'name' => 'Test User',
-//            'email' => 'test@example.com',
-//        ]);
+        //        User::factory()->create([
+        //            'name' => 'Test User',
+        //            'email' => 'test@example.com',
+        //        ]);
 
-//        Greeting::create(['greeting' => 'Hello']);
-//        Greeting::create(['greeting' => 'Hi']);
-//        Greeting::create(['greeting' => 'Hey']);
-//        Greeting::create(['greeting' => 'Howdy']);
-//
-//        Article::factory()->count(50)->create();
+        //        Greeting::create(['greeting' => 'Hello']);
+        //        Greeting::create(['greeting' => 'Hi']);
+        //        Greeting::create(['greeting' => 'Hey']);
+        //        Greeting::create(['greeting' => 'Howdy']);
+        //
+        //        Article::factory()->count(50)->create();
     }
 }

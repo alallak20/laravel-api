@@ -7,14 +7,15 @@ use Livewire\Component;
 
 class ShowArticle extends Component
 {
-    public  Article $article;
+    public Article $article;
 
     public function mount(Article $article)
     {
         $this->article = $article;
-//        $this->article = Article::find($id);
+        //        $this->article = Article::find($id);
 
     }
+
     public function render()
     {
         return view('livewire.show-article');

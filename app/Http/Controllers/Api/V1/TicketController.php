@@ -8,14 +8,14 @@ use App\Http\Requests\Api\Requests\Api\V1\StoreTicketRequest;
 use App\Http\Requests\Api\Requests\Api\V1\UpdateTicketRequest;
 use App\Http\Resources\V1\TicketResource;
 use App\Models\Ticket;
-use App\Traits\ApiConcerns;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TicketController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(TicketFilter $filters)
+    public function index(TicketFilter $filters): AnonymousResourceCollection
     {
         return TicketResource::collection(
             Ticket::filter($filters)

@@ -9,7 +9,7 @@ use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use App\Traits\ApiConcerns;
 
-class usersController extends Controller
+class AuthorsController extends Controller
 {
     use ApiConcerns;
 
@@ -18,7 +18,7 @@ class usersController extends Controller
      */
     public function index()
     {
-        if($this->include('tickets')){
+        if ($this->include('tickets')) {
             return UserResource::collection(User::with('tickets')->paginate());
         }
 
@@ -44,13 +44,13 @@ class usersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $author)
     {
-        if($this->include('tickets')){
-            return new UserResource($user->load(['tickets']));
+        if ($this->include('tickets')) {
+            return new UserResource($author->load(['tickets']));
         }
 
-        return new UserResource($user);
+        return new UserResource($author);
     }
 
     /**

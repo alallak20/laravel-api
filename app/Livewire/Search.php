@@ -11,23 +11,26 @@ class Search extends Component
 {
     #[Validate('required')]
     public $searchText = '';
-    public $results = [];
-    public $placeholder = "Search stuff...";
 
+    public $results = [];
+
+    public $placeholder = 'Search stuff...';
 
     #[On('search:clear')]
-    public function clear() {
+    public function clear()
+    {
         $this->reset(['results', 'searchText']);
     }
 
-    public function updatedSearchText($value) {
+    public function updatedSearchText($value)
+    {
         $this->reset('results');
 
         $this->validate();
 
-        $searchTerm = "%" . $value . "%";
+        $searchTerm = '%'.$value.'%';
 
-        $this->results = Article::where('title','LIKE', $searchTerm)->get();
+        $this->results = Article::where('title', 'LIKE', $searchTerm)->get();
     }
 
     public function render()

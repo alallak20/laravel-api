@@ -23,7 +23,8 @@ class ArticleForm extends Form
         $this->article = $article;
     }
 
-    public function store() {
+    public function store()
+    {
         Article::create($this->only(['title', 'content']));
     }
 

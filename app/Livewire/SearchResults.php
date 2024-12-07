@@ -13,9 +13,9 @@ class SearchResults extends Component
     #[Reactive]
     public $show = false;
 
-//    public function clear() {
-//        $this->dispatch('search:clear');
-//    }
+    //    public function clear() {
+    //        $this->dispatch('search:clear');
+    //    }
 
     public function render()
     {
