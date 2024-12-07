@@ -11,6 +11,8 @@ class AuthorTicketsController extends Controller
 {
     public function index($author_id, TicketFilter $filters)
     {
-        return TicketResource::collection(Ticket::where('user_id', $author_id)->filter($filters)->paginate());
+        return TicketResource::collection(
+            Ticket::where('user_id', $author_id)->filter($filters)->paginate()
+        );
     }
 }
