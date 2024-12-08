@@ -21,8 +21,23 @@ class StoreTicketRequest extends FormRequest
      */
     public function rules(): array
     {
+        $rules = [
+            'data.attributes.title' => 'required|string',
+            'data.attributes.description' => 'required|string',
+            'data.attributes.status' => 'required|string|in:A,C,H,X',
+        ];
+
+        if ($this->routeIs('tickets.store')) {
+            $rules['data.relationships.author.data.id'] = 'required|integer';
+        }
+
+        return $rules;
+    }
+
+    public function messages(): array
+    {
         return [
-            //
+            'data.attributes.status.in' => 'The status must be one of A, C, H, X',
         ];
     }
 }
