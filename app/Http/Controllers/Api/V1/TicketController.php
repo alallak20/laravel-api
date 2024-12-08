@@ -11,6 +11,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TicketController extends Controller
@@ -29,15 +30,21 @@ class TicketController extends Controller
         );
     }
 
-    public function show(Ticket $ticket)
+    public function show($ticket_id): TicketResource|JsonResponse
     {
-        return new TicketResource($ticket);
+        try {
+            $ticket = Ticket::findOrFail($ticket_id);
+
+            return new TicketResource($ticket);
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('Ticket not found', 404);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTicketRequest $request)
+    public function store(StoreTicketRequest $request): TicketResource|JsonResponse
     {
         try {
             $user = User::findOrFail($request->input('data.relationships.author.data.id'));
@@ -76,8 +83,15 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Ticket $ticket)
+    public function destroy($ticket_id): JsonResponse
     {
-        //
+        try {
+            $ticket = Ticket::findOrFail($ticket_id);
+            $ticket->delete();
+
+            return $this->ok('Ticket deleted successfully');
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('Ticket not found', 404);
+        }
     }
 }
