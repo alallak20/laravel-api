@@ -22,7 +22,7 @@ class TicketResource extends JsonResource
             'attributes' => [
                 'title' => $this->title,
                 'description' => $this->when(
-                    $request->RouteIs('tickets.show'),
+                    $request->RouteIs(['tickets.show', 'tickets.replace']),
                     $this->description,
                 ),
                 'status' => $this->status,
