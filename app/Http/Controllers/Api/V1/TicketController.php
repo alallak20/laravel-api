@@ -10,14 +10,20 @@ use App\Http\Requests\Api\Requests\Api\V1\UpdateTicketRequest;
 use App\Http\Resources\V1\TicketResource;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Policies\V1\TicketPolicy;
+use App\Traits\ApiConcerns;
 use App\Traits\ApiResponses;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TicketController extends Controller
 {
+    use ApiConcerns;
     use ApiResponses;
+
+    protected string $policyClass = TicketPolicy::class;
 
     /**
      * Display a listing of the resource.
@@ -74,22 +80,21 @@ class TicketController extends Controller
         // Patch.
         try {
             $ticket = Ticket::findOrFail($ticket_id);
+
+            // Policy.
+            $this->isAble('update', $ticket);
+
+            $ticket->update($request->mappedAttributes());
+
+            return new TicketResource($ticket);
+
         } catch (ModelNotFoundException) {
             return $this->ok('Ticket not found', [
                 'error' => 'The provided ticket ID does not exist.',
             ]);
+        } catch (AuthorizationException) {
+            return $this->error("You don't have permission to update this ticket.", 403);
         }
-
-        //        $model = [
-        //            'title' => $request->input('data.attributes.title'),
-        //            'description' => $request->input('data.attributes.description'),
-        //            'status' => $request->input('data.attributes.status'),
-        //            'user_id' => $request->input('data.relationships.author.data.id'),
-        //        ];
-
-        $ticket->update($request->mappedAttributes());
-
-        return new TicketResource($ticket);
     }
 
     public function replace(ReplaceTicketRequest $request, $ticket_id)
