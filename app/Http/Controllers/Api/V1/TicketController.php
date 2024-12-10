@@ -61,15 +61,9 @@ class TicketController extends Controller
             ]);
         }
 
-        return new TicketResource(Ticket::create($request->mappedAttributes()));
-    }
+        $this->isAble('create', null);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Ticket $ticket)
-    {
-        //
+        return new TicketResource(Ticket::create($request->mappedAttributes()));
     }
 
     /**
@@ -110,6 +104,8 @@ class TicketController extends Controller
 
         $user_id = $request->input('data.relationships.author.data.id');
 
+        $this->isAble('replace', $ticket);
+
         try {
             $user = User::findOrFail($user_id);
         } catch (ModelNotFoundException) {
@@ -128,11 +124,15 @@ class TicketController extends Controller
     {
         try {
             $ticket = Ticket::findOrFail($ticket_id);
-            $ticket->delete();
 
-            return $this->ok('Ticket deleted successfully');
         } catch (ModelNotFoundException) {
             return $this->error('Ticket not found', 404);
         }
+
+        $this->isAble('delete', $ticket);
+
+        $ticket->delete();
+
+        return $this->ok('Ticket deleted successfully');
     }
 }
