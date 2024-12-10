@@ -80,7 +80,7 @@ class TicketController extends Controller
             return new TicketResource($ticket);
         } catch (ModelNotFoundException) {
             return $this->ok('Ticket not found', [
-                'error' => 'The provided ticket ID does not exist.',
+                'Error' => 'The provided ticket ID does not exist.',
             ]);
         } catch (AuthorizationException) {
             return $this->error("You don't have permission to update this ticket.", 403);
@@ -94,7 +94,7 @@ class TicketController extends Controller
             $ticket = Ticket::findOrFail($ticket_id);
         } catch (ModelNotFoundException) {
             return $this->ok('Ticket not found', [
-                'error' => 'The provided ticket ID does not exist.',
+                'Error' => 'The provided ticket ID does not exist.',
             ]);
         }
 
