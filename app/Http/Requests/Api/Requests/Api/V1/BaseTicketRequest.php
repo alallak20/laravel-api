@@ -35,6 +35,7 @@ class BaseTicketRequest extends FormRequest
     {
         return [
             'data.attributes.status.in' => 'The status must be one of A, C, H, X',
+            'data.relationships.author.data.id.prohibited' => 'The author ID can NOT be updated (Prohibited)',
         ];
     }
 }

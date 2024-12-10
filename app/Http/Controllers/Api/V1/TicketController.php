@@ -54,16 +54,13 @@ class TicketController extends Controller
     public function store(StoreTicketRequest $request): TicketResource|JsonResponse
     {
         try {
-            $user = User::findOrFail($request->input('data.relationships.author.data.id'));
-        } catch (ModelNotFoundException) {
-            return $this->ok('User not found', [
-                'error' => 'The provided user ID does not exist.',
-            ]);
+            $this->isAble('create', Ticket::class);
+
+            return new TicketResource(Ticket::create($request->mappedAttributes()));
+        } catch (AuthorizationException) {
+            return $this->error("You don't have permission to create this ticket.", 403);
         }
 
-        $this->isAble('create', null);
-
-        return new TicketResource(Ticket::create($request->mappedAttributes()));
     }
 
     /**
@@ -81,7 +78,6 @@ class TicketController extends Controller
             $ticket->update($request->mappedAttributes());
 
             return new TicketResource($ticket);
-
         } catch (ModelNotFoundException) {
             return $this->ok('Ticket not found', [
                 'error' => 'The provided ticket ID does not exist.',

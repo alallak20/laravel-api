@@ -19,11 +19,17 @@ class UpdateTicketRequest extends BaseTicketRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'data.attributes.title' => 'sometimes|string',
             'data.attributes.description' => 'sometimes|string',
             'data.attributes.status' => 'sometimes|string|in:A,C,H,X',
             'data.relationships.author.data.id' => 'sometimes|integer',
         ];
+
+        if ($this->user()->tokenCan('ticket:own:update')) {
+            $rules['data.relationships.author.data.id'] = 'prohibited';
+        }
+
+        return $rules;
     }
 }
