@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 trait ApiConcerns
@@ -15,7 +16,7 @@ trait ApiConcerns
         return $this->policyClass ?? null;
     }
 
-    public function isAble($ability, $targetModel)
+    public function isAble($ability, $targetModel): Response
     {
         // We can use getPolicyClass() or just pass $this->policyClass
         // As Laravel will ook in the trait & if not exist it will look in the class that use the trait !.

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Api\Requests\Api\V1;
+namespace App\Http\Requests\Api\V1;
 
-class ReplaceTicketRequest extends BaseTicketRequest
+class ReplaceUserRequest extends BaseUserRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,10 +20,10 @@ class ReplaceTicketRequest extends BaseTicketRequest
     public function rules(): array
     {
         return [
-            'data.attributes.title' => 'required|string',
-            'data.attributes.description' => 'required|string',
-            'data.attributes.status' => 'required|string|in:A,C,H,X',
-            'data.relationships.author.data.id' => 'required|integer',
+            'data.attributes.name' => 'required|string',
+            'data.attributes.email' => 'required|email',
+            'data.attributes.isManager' => 'required|boolean',
+            'data.attributes.password' => 'required|string',
         ];
     }
 }

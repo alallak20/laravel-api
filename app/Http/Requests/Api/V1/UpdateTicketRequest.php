@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\Requests\Api\V1;
+namespace App\Http\Requests\Api\V1;
 
 use App\Permission\V1\Abilities;
 
