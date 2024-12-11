@@ -30,7 +30,8 @@ final class Abilities
 
     public static function getAbilities(User $user): array
     {
-        // Don't assign '*' !
+        // Always apply The Principle of Least Privilege.
+        // (https://laracasts.com/series/laravel-api-master-class/episodes/22).
         if ($user->is_manager) {
             return [
                 self::CreateTicket,

@@ -13,7 +13,6 @@ use App\Models\User;
 use App\Policies\V1\TicketPolicy;
 use App\Traits\ApiConcerns;
 use App\Traits\ApiResponses;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -53,13 +52,11 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request): TicketResource|JsonResponse
     {
-        try {
-            $this->isAble('create', Ticket::class);
-
+        if ($this->isAble('create', Ticket::class)) {
             return new TicketResource(Ticket::create($request->mappedAttributes()));
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to create this ticket.", 403);
         }
+
+        return $this->error("You don't have permission to create this ticket.", 403);
     }
 
     /**
@@ -72,17 +69,17 @@ class TicketController extends Controller
             $ticket = Ticket::findOrFail($ticket_id);
 
             // Policy.
-            $this->isAble('update', $ticket);
+            if ($this->isAble('update', $ticket)) {
+                $ticket->update($request->mappedAttributes());
 
-            $ticket->update($request->mappedAttributes());
+                return new TicketResource($ticket);
+            }
 
-            return new TicketResource($ticket);
+            return $this->error("You don't have permission to update this ticket.", 403);
         } catch (ModelNotFoundException) {
             return $this->ok('Ticket not found', [
                 'Error' => 'The provided ticket ID does not exist.',
             ]);
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to update this ticket.", 403);
         }
     }
 
@@ -97,19 +94,22 @@ class TicketController extends Controller
             ]);
         }
 
-        $user_id = $request->input('data.relationships.author.data.id');
-
-        $this->isAble('replace', $ticket);
-
         try {
-            $user = User::findOrFail($user_id);
+            $user_id = $request->input('data.relationships.author.data.id');
+
+            if ($this->isAble('replace', $ticket)) {
+                $user = User::findOrFail($user_id);
+
+                $ticket->update($request->mappedAttributes());
+
+                return new TicketResource($ticket);
+            }
+
+            return $this->error("You don't have permission to update this ticket.", 403);
         } catch (ModelNotFoundException) {
             return $this->error('User not found', 404);
         }
 
-        $ticket->update($request->mappedAttributes());
-
-        return new TicketResource($ticket);
     }
 
     /**
@@ -120,14 +120,15 @@ class TicketController extends Controller
         try {
             $ticket = Ticket::findOrFail($ticket_id);
 
+            if ($this->isAble('delete', $ticket)) {
+                $ticket->delete();
+
+                return $this->ok('Ticket deleted successfully');
+            }
+
+            return $this->error("You don't have permission to delete this ticket.", 403);
         } catch (ModelNotFoundException) {
             return $this->error('Ticket not found', 404);
         }
-
-        $this->isAble('delete', $ticket);
-
-        $ticket->delete();
-
-        return $this->ok('Ticket deleted successfully');
     }
 }

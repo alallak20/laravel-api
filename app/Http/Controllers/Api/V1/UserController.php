@@ -12,7 +12,6 @@ use App\Models\User;
 use App\Policies\V1\UserPolicy;
 use App\Traits\ApiConcerns;
 use App\Traits\ApiResponses;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
@@ -35,13 +34,11 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        try {
-            $this->isAble('store', User::class);
-
+        if ($this->isAble('store', User::class)) {
             return new UserResource(User::create($request->mappedAttributes()));
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to create this User.", 403);
         }
+
+        return $this->error("You don't have permission to create this User.", 403);
     }
 
     /**
@@ -65,17 +62,17 @@ class UserController extends Controller
             $user = User::findOrFail($user_id);
 
             // Policy.
-            $this->isAble('update', $user);
+            if ($this->isAble('update', $user)) {
+                $user->update($request->mappedAttributes());
 
-            $user->update($request->mappedAttributes());
+                return new UserResource($user);
+            }
 
-            return new UserResource($user);
+            return $this->error("You don't have permission to update this user.", 403);
         } catch (ModelNotFoundException) {
             return $this->ok('User not found', [
                 'Error' => 'The provided user ID does not exist.',
             ]);
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to update this user.", 403);
         }
     }
 
@@ -85,17 +82,17 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($user_id);
 
-            $this->isAble('replace', $user);
+            if ($this->isAble('replace', $user)) {
+                $user->update($request->mappedAttributes());
 
-            $user->update($request->mappedAttributes());
+                return new UserResource($user);
+            }
 
-            return new UserResource($user);
+            return $this->error("You don't have permission to update this user.", 403);
         } catch (ModelNotFoundException) {
             return $this->ok('User not found', [
                 'Error' => 'The provided user ID does not exist.',
             ]);
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to update this user.", 403);
         }
 
     }
@@ -108,16 +105,15 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($user_id);
 
-            $this->isAble('delete', $user);
+            if ($this->isAble('delete', $user)) {
+                $user->delete();
 
-            $user->delete();
+                return $this->ok('User deleted successfully');
+            }
 
-            return $this->ok('User deleted successfully');
+            return $this->error("You don't have permission to delete this user.", 403);
         } catch (ModelNotFoundException) {
             return $this->error('User not found', 404);
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to delete this user.", 403);
         }
-
     }
 }

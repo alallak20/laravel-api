@@ -12,7 +12,6 @@ use App\Models\Ticket;
 use App\Policies\V1\TicketPolicy;
 use App\Traits\ApiConcerns;
 use App\Traits\ApiResponses;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,7 +26,9 @@ class AuthorTicketsController extends Controller
     public function index(TicketFilter $filters, $author_id): AnonymousResourceCollection
     {
         return TicketResource::collection(
-            Ticket::where('user_id', $author_id)->filter($filters)->paginate()
+            Ticket::where('user_id', $author_id)
+                ->filter($filters)
+                ->paginate()
         );
     }
 
@@ -36,15 +37,13 @@ class AuthorTicketsController extends Controller
      */
     public function store(StoreTicketRequest $request): TicketResource|JsonResponse
     {
-        try {
-            $this->isAble('store', Ticket::class);
-
+        if ($this->isAble('store', Ticket::class)) {
             return new TicketResource(Ticket::create($request->mappedAttributes([
                 'author' => 'user_id',
             ])));
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to create this ticket.", 403);
         }
+
+        return $this->error("You don't have permission to create this ticket.", 403);
     }
 
     public function replace(ReplaceTicketRequest $request, $author_id, $ticket_id): TicketResource|JsonResponse
@@ -55,17 +54,17 @@ class AuthorTicketsController extends Controller
                 ->where('user_id', $author_id)
                 ->firstOrFail();
 
-            $this->isAble('replace', $ticket);
+            if ($this->isAble('replace', $ticket)) {
+                $ticket->update($request->mappedAttributes());
 
-            $ticket->update($request->mappedAttributes());
+                return new TicketResource($ticket);
+            }
 
-            return new TicketResource($ticket);
+            return $this->error("You don't have permission to update this ticket.", 403);
         } catch (ModelNotFoundException) {
             return $this->ok('Ticket not found', [
                 'Error' => 'The provided author ticket does not exist.',
             ]);
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to update this ticket.", 403);
         }
     }
 
@@ -77,17 +76,17 @@ class AuthorTicketsController extends Controller
                 ->where('user_id', $author_id)
                 ->firstOrFail();
 
-            $this->isAble('update', $ticket);
+            if ($this->isAble('update', $ticket)) {
+                $ticket->update($request->mappedAttributes());
 
-            $ticket->update($request->mappedAttributes());
+                return new TicketResource($ticket);
+            }
 
-            return new TicketResource($ticket);
+            return $this->error("You don't have permission to update this ticket.", 403);
         } catch (ModelNotFoundException) {
             return $this->ok('Ticket not found', [
                 'Error' => 'The provided author ticket does not exist.',
             ]);
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to update this ticket.", 403);
         }
     }
 
@@ -98,15 +97,15 @@ class AuthorTicketsController extends Controller
                 ->where('user_id', $author_id)
                 ->firstOrFail();
 
-            $this->isAble('delete', $ticket);
+            if ($this->isAble('delete', $ticket)) {
+                $ticket->delete();
 
-            $ticket->delete();
+                return $this->ok('Ticket deleted successfully.');
+            }
 
-            return $this->ok('Ticket deleted successfully.');
+            return $this->error("You don't have permission to delete this ticket.", 403);
         } catch (ModelNotFoundException) {
             return $this->error('Author ticket not found', 404);
-        } catch (AuthorizationException) {
-            return $this->error("You don't have permission to delete this ticket.", 403);
         }
     }
 }

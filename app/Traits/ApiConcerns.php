@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use Illuminate\Auth\Access\Response;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 trait ApiConcerns
@@ -16,11 +16,20 @@ trait ApiConcerns
         return $this->policyClass ?? null;
     }
 
-    public function isAble($ability, $targetModel): Response
+    // Todo::
+    // In new laravel versions (>10) why should use (authorize) in request classes.
+    // (https://laracasts.com/series/laravel-api-master-class/episodes/21) comments.
+    public function isAble($ability, $targetModel): bool
     {
         // We can use getPolicyClass() or just pass $this->policyClass
         // As Laravel will ook in the trait & if not exist it will look in the class that use the trait !.
-        return $this->authorize($ability, [$targetModel, $this->getPolicyClass()]);
+        try {
+            $this->authorize($ability, [$targetModel, $this->getPolicyClass()]);
+
+            return true;
+        } catch (AuthorizationException) {
+            return false;
+        }
     }
 
     public function include(string $relationship): bool
