@@ -17,7 +17,7 @@ trait ApiConcerns
     }
 
     // Todo::
-    // In new laravel versions (>10) why should use (authorize) in request classes.
+    // In new laravel versions (>10) we should use (authorize) in request classes.
     // (https://laracasts.com/series/laravel-api-master-class/episodes/21) comments.
     public function isAble($ability, $targetModel): bool
     {

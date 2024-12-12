@@ -12,7 +12,6 @@ use App\Models\Ticket;
 use App\Policies\V1\TicketPolicy;
 use App\Traits\ApiConcerns;
 use App\Traits\ApiResponses;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -49,63 +48,47 @@ class AuthorTicketsController extends Controller
     public function replace(ReplaceTicketRequest $request, $author_id, $ticket_id): TicketResource|JsonResponse
     {
         // Put.
-        try {
-            $ticket = Ticket::where('id', $ticket_id)
-                ->where('user_id', $author_id)
-                ->firstOrFail();
+        $ticket = Ticket::where('id', $ticket_id)
+            ->where('user_id', $author_id)
+            ->firstOrFail();
 
-            if ($this->isAble('replace', $ticket)) {
-                $ticket->update($request->mappedAttributes());
+        if ($this->isAble('replace', $ticket)) {
+            $ticket->update($request->mappedAttributes());
 
-                return new TicketResource($ticket);
-            }
-
-            return $this->error("You don't have permission to update this ticket.", 403);
-        } catch (ModelNotFoundException) {
-            return $this->ok('Ticket not found', [
-                'Error' => 'The provided author ticket does not exist.',
-            ]);
+            return new TicketResource($ticket);
         }
+
+        return $this->error("You don't have permission to update this ticket.", 403);
     }
 
     public function update(UpdateTicketRequest $request, $author_id, $ticket_id): TicketResource|JsonResponse
     {
         // Patch.
-        try {
-            $ticket = Ticket::where('id', $ticket_id)
-                ->where('user_id', $author_id)
-                ->firstOrFail();
+        $ticket = Ticket::where('id', $ticket_id)
+            ->where('user_id', $author_id)
+            ->firstOrFail();
 
-            if ($this->isAble('update', $ticket)) {
-                $ticket->update($request->mappedAttributes());
+        if ($this->isAble('update', $ticket)) {
+            $ticket->update($request->mappedAttributes());
 
-                return new TicketResource($ticket);
-            }
-
-            return $this->error("You don't have permission to update this ticket.", 403);
-        } catch (ModelNotFoundException) {
-            return $this->ok('Ticket not found', [
-                'Error' => 'The provided author ticket does not exist.',
-            ]);
+            return new TicketResource($ticket);
         }
+
+        return $this->error("You don't have permission to update this ticket.", 403);
     }
 
     public function destroy($author_id, $ticket_id): JsonResponse
     {
-        try {
-            $ticket = Ticket::where('id', $ticket_id)
-                ->where('user_id', $author_id)
-                ->firstOrFail();
+        $ticket = Ticket::where('id', $ticket_id)
+            ->where('user_id', $author_id)
+            ->firstOrFail();
 
-            if ($this->isAble('delete', $ticket)) {
-                $ticket->delete();
+        if ($this->isAble('delete', $ticket)) {
+            $ticket->delete();
 
-                return $this->ok('Ticket deleted successfully.');
-            }
-
-            return $this->error("You don't have permission to delete this ticket.", 403);
-        } catch (ModelNotFoundException) {
-            return $this->error('Author ticket not found', 404);
+            return $this->ok('Ticket deleted successfully.');
         }
+
+        return $this->error("You don't have permission to delete this ticket.", 403);
     }
 }
