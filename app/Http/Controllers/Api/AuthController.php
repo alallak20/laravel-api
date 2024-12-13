@@ -14,6 +14,43 @@ class AuthController extends Controller
 {
     use ApiResponses;
 
+    // Attributes:
+
+    //    #[Endpoint(
+    //        title: "Login",
+    //        description: "Authenticates the user and returns Api token."
+    //    )]
+    //    #[Unauthenticated]
+    //    #[Group("Authentication")]
+    //    #[Response(
+    //        status: 200,
+    //        content: [
+    //            'data' => [
+    //                'token' => '{YOUR_AUTH_KEY}'
+    //            ],
+    //            'message' => 'Authenticated',
+    //            'status' => 200
+    //        ]
+    //    )]
+
+    // Docblock:
+
+    /**
+     * Login
+     * Authenticates the user and returns Api token.
+     *
+     * @unauthenticated
+     *
+     * @group Authentication
+     *
+     * @response 200 {
+     * "data": {
+     * "token": "{YOUR_AUTH_KEY}"
+     * },
+     * "message": "Authenticated",
+     * "status": 200
+     * }
+     */
     public function login(LoginUserRequest $request)
     {
         $request->validated();

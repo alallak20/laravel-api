@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1;
 
 use App\Permission\V1\Abilities;
+use Illuminate\Support\Facades\Auth;
 
 class StoreTicketRequest extends BaseTicketRequest
 {
@@ -23,7 +24,12 @@ class StoreTicketRequest extends BaseTicketRequest
     {
 
         $authorIdAttr = $this->routeIs('tickets.store') ? 'data.relationships.author.data.id' : 'author';
-        $user = $this->user();
+
+        // This is fine, but it needs a request and scribe will Not have it value:
+        //        $user = $this->user();
+        // So we do this instead:
+        $user = Auth::user();
+
         $authorRule = 'required|integer|exists:users,id';
 
         $rules = [
@@ -33,7 +39,7 @@ class StoreTicketRequest extends BaseTicketRequest
             $authorIdAttr => $authorRule.'|size:'.$user->id,
         ];
 
-        if ($user->tokenCan(Abilities::CreateTicket)) {
+        if (Auth::user()->tokenCan(Abilities::CreateTicket)) {
             $rules[$authorIdAttr] = $authorRule;
         }
 
